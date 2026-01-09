@@ -1,2 +1,4 @@
 blockData
 backup
+node_modules
+.env.sh
