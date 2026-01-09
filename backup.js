@@ -1,10 +1,17 @@
 const config = require('./config');
 const { spawn } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
 let p;
 
+if (!fs.existsSync(config.backup_dir)) {
+	fs.mkdirSync(config.backup_dir, { recursive: true });
+	console.log('Created backup directory:', config.backup_dir);
+}
+
 function runSeed() {
-	p = spawn('fibos seed.js > log.log', { shell: true });
+	p = spawn('fibos seed.js', { shell: true });
 }
 
 async function endSeed() {
@@ -28,14 +35,13 @@ async function syncData() {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({})
 	});
-	const a = await rep.json();
+	const { head_block_id, head_block_num, head_block_time } = await rep.json();
 
-	console.log("now head_block_num==> ",a.head_block_num);
+	console.log("now ==> ", { head_block_id, head_block_num, head_block_time });
 
 	await endSeed();
 	console.log("tar  =====>");
-	spawn('tar', ['-zcvf', config.backup_dir + "/data_" + a.head_block_num + ".tar.gz", config.data_dir]);
-
+	spawn('tar', ['-zcvf', config.backup_dir + `/${head_block_time}-${head_block_num}-${head_block_id}.tar.gz`, config.data_dir]);
 	console.log("restart   sync");
 	runSeed();
 

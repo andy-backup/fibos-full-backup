@@ -1,7 +1,8 @@
 {
 	"config_dir": "./blockData/data",
 	"data_dir": "./blockData/data",
-	"backup_dir": "./blockData/backup",
+	"backup_dir": "./backup",
+	"genesis_path": "./genesis.json",
 	"p2p_peer_address": [
 		"47.238.75.80:9873",
 		"47.244.129.100:29875",
@@ -12,6 +13,9 @@
 		"qsx.pub:9871",
 		"fibos-node-1.chains.one:9874",
 		"fibos-node-2.chains.one:9875",
-		"fibos-node-3.chains.one:9876"
+		"fibos-node-3.chains.one:9876",
+		"p2p-mainnet.fibos123.com:9977",
+		"to-rpc.fibos.io:9870",
+		"to-p2p.fibos.io:9870"
 	]
 }
