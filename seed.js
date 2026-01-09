@@ -1,4 +1,4 @@
-var fibos = require('fibos');
+const fibos = require('chain');
 var fs = require("fs");
 var config = require('./config');
 console.notice("start FIBOS seed node");

@@ -1,0 +1,3 @@
+start FIBOS seed node
+config_dir: /blockData/data
+data_dir: /blockData/data

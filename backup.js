@@ -1,44 +1,45 @@
-const coroutine = require('coroutine');
 const config = require('./config');
-const http = require("http");
+const { spawn } = require('child_process');
 
 let p;
 
 function runSeed() {
-	p = process.start('fibos', ['seed.js']);
+	p = spawn('fibos seed.js > log.log', { shell: true });
 }
 
-function endSeed() {
+async function endSeed() {
 	if (p) {
 		console.log('kill fibos');
 		p.kill(15);
 	}
 	console.log('sleep 1 s');
-	coroutine.sleep(1000);
+	await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 
 runSeed();
 syncData();
 
-function syncData() {
+async function syncData() {
 	console.log("start now ,waiting 10 s")
-	coroutine.sleep(10 * 1000);
-	const rep = http.post("http://127.0.0.1:8870/v1/chain/get_info", {
-		json: {}
+	await new Promise(resolve => setTimeout(resolve, 10 * 1000));
+	const rep = await fetch("http://127.0.0.1:8870/v1/chain/get_info", {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({})
 	});
-	const a = rep.json();
+	const a = await rep.json();
 
 	console.log("now head_block_num==> ",a.head_block_num);
 
-	endSeed();
+	await endSeed();
 	console.log("tar  =====>");
-	process.run('tar', ['-zcvf', config.backup_dir + "/data_" + a.head_block_num + ".tar.gz", config.data_dir]);
+	spawn('tar', ['-zcvf', config.backup_dir + "/data_" + a.head_block_num + ".tar.gz", config.data_dir]);
 
 	console.log("restart   sync");
 	runSeed();
 
 	console.log("waiting 30 s");
-	coroutine.sleep(30 * 1000);
-	syncData()
+	await new Promise(resolve => setTimeout(resolve, 30 * 1000));
+	await syncData()
 }
